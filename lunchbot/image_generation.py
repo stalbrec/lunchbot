@@ -113,3 +113,46 @@ def generate_image_huggingface(
     image = Image.open(io.BytesIO(image_bytes))
     logger.info(f"Image generated successfully. Saving to {save_path}.")
     image.save(save_path)
+
+
+def generate_image_cloudflare(
+    prompt,
+    api_token,
+    api_url,
+    save_path="image.jpg",
+    prompt_prefix=None,
+):
+    """Generate an image using the cloudflare api.
+
+    Parameters
+    ----------
+    prompt : str
+        The prompt to generate an image for.
+    api_token : str
+        The API token to use for the request.
+    api_url : str
+        The URL of the API to use for the request.
+    save_path : str
+        The path to save the generated image to. Defaults to "image.jpg".
+    prompt_prefix : str or None
+        A style prefix prepended to the prompt. If None, a generic default is used.
+    """
+    headers = {"Authorization": f"Bearer {api_token}"}
+
+    if prompt_prefix is None:
+        prompt_prefix = "Generate a realistic looking image based on the following prompt: "
+
+    full_prompt = prompt_prefix + prompt
+    logger.info(f"Generating image (with cloudflare-api) with prompt: {full_prompt}")
+    try:
+        response = requests.post(api_url, headers=headers, json={"prompt": full_prompt}, timeout=60)
+        response.raise_for_status()
+        payload = response.json()
+        image_b64 = payload["result"]["image"]
+    except (requests.RequestException, KeyError, TypeError, ValueError) as exc:
+        detail = response.text[:500] if response is not None else ""
+        raise RuntimeError(f"Image generation failed: {exc!r} {detail}".strip()) from exc
+
+    image = Image.open(io.BytesIO(base64.b64decode(image_b64)))
+    logger.info(f"Image generated successfully. Saving to {save_path}.")
+    image.save(save_path)

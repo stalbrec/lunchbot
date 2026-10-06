@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 import lunchbot.alsterfood_scraping as alsterfood_scraping
 import lunchbot.cfel_scraping as cfel_scraping
-from lunchbot.image_generation import generate_image_huggingface, generate_image_openai
+from lunchbot.image_generation import generate_image_cloudflare, generate_image_huggingface, generate_image_openai
 from lunchbot.mattermost_posting import send_message_via_webhook
 from lunchbot.utils import color_text
 
@@ -31,14 +31,16 @@ def main():
     IMAGE_CLOUD_UPLOAD_TOKEN = os.getenv("IMAGE_CLOUD_UPLOAD_TOKEN")
     IMAGE_CLOUD_DOWNLOAD_URL = os.getenv("IMAGE_CLOUD_DOWNLOAD_URL")
     MESSAGE_PREFIX = os.getenv("MESSAGE_PREFIX")
+    CLOUDFLARE_API_URL = os.getenv("CLOUDFLARE_API_URL")
+    CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN")
     HUGGINGFACE_API_URL = os.getenv("HUGGINGFACE_API_URL")
     HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
     API_TO_USE = os.getenv("API_TO_USE").lower()  # huggingface or openai
     MATTERMOST_USERNAME = os.getenv("MATTERMOST_USERNAME")
     IMAGE_PROMPT_PREFIX = os.getenv("IMAGE_PROMPT_PREFIX")
 
-    if API_TO_USE != "huggingface" and API_TO_USE != "openai":
-        raise ValueError("API_TO_USE must be either 'huggingface' or 'openai'")
+    if API_TO_USE != "huggingface" and API_TO_USE != "openai" and API_TO_USE != "cloudflare":
+        raise ValueError("API_TO_USE must be either 'huggingface', 'cloudflare' or 'openai'")
 
     # check which day it is and set the MESSAGE_SUFFIX accordingly
     today = datetime.datetime.today().weekday()
@@ -174,6 +176,27 @@ def main():
                 prompt_prefix=IMAGE_PROMPT_PREFIX,
             )
             dish["generation_info_tag"] = "Generated with OpenAI API"
+        elif API_TO_USE == "cloudflare":
+            try:
+                # try generating image using cloudflare api
+                generate_image_cloudflare(
+                    prompt=dish_name,
+                    api_url=CLOUDFLARE_API_URL,
+                    api_token=CLOUDFLARE_API_TOKEN,
+                    save_path=f"images/{meal_hash}.jpg",
+                    prompt_prefix=IMAGE_PROMPT_PREFIX,
+                )
+                dish["generation_info_tag"] = "Generated with Cloudflare API"
+            except Exception as e:
+                    # if an error occurs, use the OpenAI API to generate the image
+                    logger.error(f"An error occurred while generating image: {e}")
+                    logger.info("Trying to generate image with OpenAI API")
+                    generate_image_openai(
+                        prompt=dish_name,
+                        save_path=f"images/{meal_hash}.jpg",
+                        prompt_prefix=IMAGE_PROMPT_PREFIX,
+                    )
+                    dish["generation_info_tag"] = "Generated with OpenAI API"
         elif API_TO_USE == "huggingface":
             try:
                 # try generating image using huggingface
