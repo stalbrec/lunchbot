@@ -11,6 +11,7 @@ permissions:
 jobs:
   run_lunchbot:
     runs-on: ubuntu-latest
+    environment: uhhpd-mattermost
 
     steps:
       - name: checkout
