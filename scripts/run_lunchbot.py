@@ -90,6 +90,9 @@ def main():
     else:
         MESSAGE_SUFFIX = ""
 
+    if MESSAGE_SUFFIX == "":
+        MESSAGE_SUFFIX = os.getenv("MESSAGE_SUFFIX_DEFAULT", "")
+
     logger = logging.getLogger("lunchbot")
 
     logger.info(f"Running on host: {HOSTNAME}")

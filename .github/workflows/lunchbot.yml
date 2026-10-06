@@ -48,6 +48,7 @@ jobs:
 
           # Message content (only add the ones you actually set)
           MESSAGE_PREFIX: ${{ secrets.MESSAGE_PREFIX }}
+          MESSAGE_SUFFIX_DEFAULT: ${{ secrets.MESSAGE_SUFFIX_DEFAULT }}
           MESSAGE_SUFFIX_MON: ${{ secrets.MESSAGE_SUFFIX_MON }}
           MESSAGE_SUFFIX_TUE: ${{ secrets.MESSAGE_SUFFIX_TUE }}
           MESSAGE_SUFFIX_WED: ${{ secrets.MESSAGE_SUFFIX_WED }}
