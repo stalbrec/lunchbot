@@ -1,0 +1,52 @@
+name: lunchbot
+
+on:
+  schedule:
+    - cron: "0 10 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run_lunchbot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+      - name: run lunchbot
+        run: uv run scripts/run_lunchbot.py
+        env:
+          # Image generation
+          API_TO_USE: ${{ vars.API_TO_USE }}
+          HUGGINGFACE_API_URL: ${{ vars.HUGGINGFACE_API_URL }}
+          HUGGINGFACE_API_TOKEN: ${{ secrets.HUGGINGFACE_API_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IMAGE_PROMPT_PREFIX: ${{ vars.IMAGE_PROMPT_PREFIX }}
+          USE_OPENAI_IMAGE_URL: ${{ vars.USE_OPENAI_IMAGE_URL }}
+
+          # Menu sources
+          ALSTERFOOD_WEBSITE_URL: ${{ vars.ALSTERFOOD_WEBSITE_URL }}
+          CFEL_WEBSITE_URL: ${{ vars.CFEL_WEBSITE_URL }}
+
+          # Image cloud storage (WebDAV = file upload over HTTP)
+          IMAGE_CLOUD_UPLOAD_URL: ${{ secrets.IMAGE_CLOUD_UPLOAD_URL }}
+          IMAGE_CLOUD_UPLOAD_TOKEN: ${{ secrets.IMAGE_CLOUD_UPLOAD_TOKEN }}
+          IMAGE_CLOUD_DOWNLOAD_URL: ${{ secrets.IMAGE_CLOUD_DOWNLOAD_URL }}
+
+          # Mattermost
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+          MATTERMOST_WEBHOOK_URL_ALERT: ${{ secrets.MATTERMOST_WEBHOOK_URL_ALERT }}
+          MATTERMOST_USERNAME: ${{ vars.MATTERMOST_USERNAME }}
+          ALERT_PREFIX: ${{ vars.ALERT_PREFIX }}
+
+          # Message content (only add the ones you actually set)
+          MESSAGE_PREFIX: ${{ vars.MESSAGE_PREFIX }}
+          MESSAGE_SUFFIX_MON: ${{ vars.MESSAGE_SUFFIX_MON }}
+          MESSAGE_SUFFIX_TUE: ${{ vars.MESSAGE_SUFFIX_TUE }}
+          MESSAGE_SUFFIX_WED: ${{ vars.MESSAGE_SUFFIX_WED }}
+          MESSAGE_SUFFIX_THU: ${{ vars.MESSAGE_SUFFIX_THU }}
+          MESSAGE_SUFFIX_FRI: ${{ vars.MESSAGE_SUFFIX_FRI }}
