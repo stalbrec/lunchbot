@@ -24,6 +24,8 @@ jobs:
           API_TO_USE: ${{ vars.API_TO_USE }}
           HUGGINGFACE_API_URL: ${{ vars.HUGGINGFACE_API_URL }}
           HUGGINGFACE_API_TOKEN: ${{ secrets.HUGGINGFACE_API_TOKEN }}
+          CLOUDFLARE_API_URL: ${{ secrets.CLOUDFLARE_API_URL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           IMAGE_PROMPT_PREFIX: ${{ vars.IMAGE_PROMPT_PREFIX }}
           USE_OPENAI_IMAGE_URL: ${{ vars.USE_OPENAI_IMAGE_URL }}
