@@ -13,7 +13,9 @@ permissions:
 jobs:
   run_lunchbot:
     runs-on: ubuntu-latest
-    environment: uhhpd-mattermost
+    environment: 
+      name: uhhpd-mattermost
+      deployment: false
 
     steps:
       - name: checkout
