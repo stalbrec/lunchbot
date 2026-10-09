@@ -1,10 +1,6 @@
 name: lunchbot
 
 on:
-  schedule:
-    - cron: "48 9 * * 1-5"
-      timezone: "Europe/Berlin"
-
   workflow_dispatch:
 
 permissions:
