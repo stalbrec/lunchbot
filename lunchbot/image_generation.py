@@ -120,6 +120,7 @@ def generate_image_cloudflare(
     api_token,
     api_url,
     save_path="image.jpg",
+    resize_to=512,
     prompt_prefix=None,
 ):
     """Generate an image using the cloudflare api.
@@ -136,6 +137,10 @@ def generate_image_cloudflare(
         The path to save the generated image to. Defaults to "image.jpg".
     prompt_prefix : str or None
         A style prefix prepended to the prompt. If None, a generic default is used.
+    resize_to : int or None
+        If set, downscale the saved image to this many pixels on the longer
+        edge (preserving aspect ratio). Set to None to keep the original size.
+        Defaults to 512.
     """
     headers = {"Authorization": f"Bearer {api_token}"}
 
@@ -154,5 +159,10 @@ def generate_image_cloudflare(
         raise RuntimeError(f"Image generation failed: {exc!r} {detail}".strip()) from exc
 
     image = Image.open(io.BytesIO(base64.b64decode(image_b64)))
+
+    if resize_to is not None:
+        image.thumbnail((resize_to, resize_to), Image.LANCZOS)
+    image.convert("RGB").save(save_path, format="JPEG", quality=85, optimize=True)
+
     logger.info(f"Image generated successfully. Saving to {save_path}.")
     image.save(save_path)
