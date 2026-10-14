@@ -113,7 +113,7 @@ def fetch_todays_lunch_menu(url: str):
 
             if "vegan" in dish_info.lower():
                 dish_veg_label = "vegan"
-            elif "vegetarisch" in dish_info.lower():
+            elif any(veg in dish_info.lower() for veg in ["vegetarian", "vegetarisch"]):
                 dish_veg_label = "vegetarian"
             else:
                 dish_veg_label = "meat"
