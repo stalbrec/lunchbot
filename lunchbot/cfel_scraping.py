@@ -40,6 +40,8 @@ def fetch_todays_lunch_menu(url: str):
                 dish_name = d.text
             else:
                 raise ValueError("Multiple meal descriptions found")
+        if "caesar salad" in dish_name.lower() or "caesars salat" in dish_name.lower():
+            continue
 
         # check if the dish is vegetarian or vegan
         vegetarian = None
