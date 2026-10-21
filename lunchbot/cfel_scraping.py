@@ -6,6 +6,13 @@ from bs4 import BeautifulSoup
 
 from lunchbot.utils import generate_hash, translate_german_food_description_to_english
 
+from datetime import datetime
+import locale
+
+# set locale to de_DE for current-date guard (CFEL mensa website is in german)
+locale.setlocale(locale.LC_ALL, "de_DE")
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,6 +36,20 @@ def fetch_todays_lunch_menu(url: str):
     page_source = requests.get(url, timeout=20).text
     # Parse the HTML content using BeautifulSoup
     soup = BeautifulSoup(page_source, "html.parser")
+
+    titles = soup.find_all("h2", class_="aw-menu-title")
+    today_weekday_name = datetime.now().strftime("%A")
+    extracted_weekday = "n/a"
+    possible_weekdays = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"]
+    if len(titles) > 0:
+        extracted_weekday = next(
+            d for d in possible_weekdays if d.lower() in titles[0].text.lower()
+        )
+    if extracted_weekday != today_weekday_name:
+        raise RuntimeError(
+            "Extracted weekday does not match with todays weekday name: "
+            f"{extracted_weekday} (extracted) != {today_weekday_name} (today)"
+        )
 
     # find all the different cards (corresponding to different days)
     card_divs = soup.find_all("div", class_="aw-meal row no-margin-xs")
