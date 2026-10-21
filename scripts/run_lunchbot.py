@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 import lunchbot.alsterfood_scraping as alsterfood_scraping
 import lunchbot.cfel_scraping as cfel_scraping
+import lunchbot.labcuisine_scraping as labcuisine_scraping
 from lunchbot.image_generation import generate_image_cloudflare, generate_image_huggingface, generate_image_openai
 from lunchbot.mattermost_posting import send_message_via_webhook
 from lunchbot.utils import color_text
@@ -25,6 +26,7 @@ def main():
     HOSTNAME = os.getenv("HOSTNAME", "unknown_host")
     ALSTERFOOD_WEBSITE_URL = os.getenv("ALSTERFOOD_WEBSITE_URL")
     CFEL_WEBSITE_URL = os.getenv("CFEL_WEBSITE_URL")
+    LABCUISINE_WEBSITE_URL = os.getenv("LABCUISINE_WEBSITE_URL")
     MATTERMOST_WEBHOOK_URL = os.getenv("MATTERMOST_WEBHOOK_URL")
     USE_OPENAI_IMAGE_URL = os.getenv("USE_OPENAI_IMAGE_URL")
     IMAGE_CLOUD_UPLOAD_URL = os.getenv("IMAGE_CLOUD_UPLOAD_URL")
@@ -140,6 +142,11 @@ def main():
         list_of_dishes += cfel_scraping.fetch_todays_lunch_menu(CFEL_WEBSITE_URL)
     except Exception as e:
         logger.error(f"An error occurred while fetching CFEL lunch menu: {str(e)}")
+
+    try:
+        list_of_dishes += labcuisine_scraping.fetch_todays_lunch_menu(LABCUISINE_WEBSITE_URL)
+    except Exception as e:
+        logger.error(f"An error occured while fetching Labcuisine lunch menu: {str(e)}")
 
     logger.info("The following dishes were found:")
     for i, dish_name in enumerate(list_of_dishes):
@@ -291,6 +298,10 @@ def main():
     )
     table_dish_columns_merged = table_dish_columns_merged.replace(
         "Cafe CFEL", f"**[Cafe CFEL]({CFEL_WEBSITE_URL})** :cfel:"
+    )
+
+    table_dish_columns_merged = table_dish_columns_merged.replace(
+        "Labcuisine", f"**[Labcuisine]({LABCUISINE_WEBSITE_URL})** :labcuisine:"
     )
 
     # add prefix and suffix to the message
