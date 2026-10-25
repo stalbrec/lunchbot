@@ -1,0 +1,15 @@
+run_lunchbot:
+  image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  script:
+    # set DEBUG_DAY (e.g. 2026-12-24) when starting the pipeline to pretend it's that day
+    - |
+      apt-get update -qq && apt-get install -y -qq --no-install-recommends curl
+      if [ -n "$DEBUG_DAY" ]; then
+        apt-get install -y -qq --no-install-recommends faketime
+        faketime "$DEBUG_DAY 12:00:00" uv run scripts/run_lunchbot.py
+      else
+        uv run scripts/run_lunchbot.py
+      fi
