@@ -3,6 +3,7 @@
 import hashlib
 import logging
 import os
+import json
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -50,28 +51,42 @@ def translate_german_food_description_to_english(
 
     if system_content is None:
         system_content = (
-            "You are a translator. Be sure to keep the meaning of the text. "
+            "You translate German meal names into English for a menu. "
+            "Keep brand or product names unchanged. "
+            "Return only the translated meal name, with no notes, alterantive or explanations."
         )
 
-    prompt = meal_name + " - please translate this from german to english."
 
-    logger.info(f"Prompt: {prompt}")
     logger.info(f"System Content: {system_content}")
 
     completion = client.chat.completions.create(
         model="gpt-5-nano",
         messages=[
             {"role": "system", "content": system_content},
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": meal_name},
         ],
+        response_format={
+            "type":"json_schema",
+            "json_schema":{
+                "name":"translation",
+                "strict":True,
+                "schema":{
+                    "type":"object",
+                    "properties":{"translation":{"type":"string"}},
+                    "required":["translation"],
+                    "additionalProperties":False,
+                }
+            }
+        }
     )
 
     response = completion.choices[0].message.content
+    translation = json.loads(response)['translation']
 
     if return_prompt_answer:
-        return prompt, response
+        return meal_name, translation
 
-    return response
+    return translation
 
 
 def generate_hash(input_string: str):
