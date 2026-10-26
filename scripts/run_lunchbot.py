@@ -89,8 +89,8 @@ def main():
             MESSAGE_SUFFIX = os.getenv("MESSAGE_SUFFIX_SUN_ODD")
     else:
         MESSAGE_SUFFIX = ""
-    print("type of MESSAGE_SUFFIX",type(MESSAGE_SUFFIX), MESSAGE_SUFFIX)
-    if MESSAGE_SUFFIX == "":
+
+    if MESSAGE_SUFFIX == "" or MESSAGE_SUFFIX is None:
         MESSAGE_SUFFIX = os.getenv("MESSAGE_SUFFIX_DEFAULT", "")
 
     logger = logging.getLogger("lunchbot")
