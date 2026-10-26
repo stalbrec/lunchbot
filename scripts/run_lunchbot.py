@@ -89,7 +89,7 @@ def main():
             MESSAGE_SUFFIX = os.getenv("MESSAGE_SUFFIX_SUN_ODD")
     else:
         MESSAGE_SUFFIX = ""
-
+    print("type of MESSAGE_SUFFIX",type(MESSAGE_SUFFIX), MESSAGE_SUFFIX)
     if MESSAGE_SUFFIX == "":
         MESSAGE_SUFFIX = os.getenv("MESSAGE_SUFFIX_DEFAULT", "")
 
