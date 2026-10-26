@@ -59,7 +59,7 @@ def translate_german_food_description_to_english(
     logger.info(f"System Content: {system_content}")
 
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-5-nano",
         messages=[
             {"role": "system", "content": system_content},
             {"role": "user", "content": prompt},
