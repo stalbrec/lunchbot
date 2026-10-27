@@ -94,10 +94,10 @@ def fetch_todays_lunch_menu(url: str):
     if not this_week:
         raise RuntimeError("Extracted menu is not this weeks menu!")
 
-    weekday_index = tables[1][0].index(now.strftime("%A"))
+    weekday_index = datetime.now().weekday()+1
 
     for category_row in tables[1][1:]:
-        if len(category_row) < weekday_index:
+        if len(category_row) <= weekday_index:
             continue
         if category_row[0] == "canteen":
             continue
