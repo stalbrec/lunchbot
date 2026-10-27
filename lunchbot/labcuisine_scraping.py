@@ -3,7 +3,7 @@ import requests
 import yaml
 from bs4 import BeautifulSoup
 
-from lunchbot.utils import generate_hash
+from lunchbot.utils import generate_hash, translate_german_food_description_to_english
 
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
@@ -117,6 +117,9 @@ def fetch_todays_lunch_menu(url: str):
             dish_info = "vegan"
         else:
             dish_info = "meat"
+
+        dish_name_translated = translate_german_food_description_to_english(dish_name)
+
 
         dishes_list.append(
             {
