@@ -120,7 +120,7 @@ def fetch_todays_lunch_menu(url: str):
 
         dishes_list.append(
             {
-                "name": dish_name,
+                "name": dish_name_translated,
                 "info": dish_info,
                 "price": dish_price,
                 "canteen": "Labcuisine",
