@@ -96,10 +96,8 @@ def fetch_todays_lunch_menu(url: str):
 
     weekday_index = datetime.now().weekday()+1
 
-    for category_row in tables[1][1:]:
+    for category_row in tables[1][1:3]:
         if len(category_row) <= weekday_index:
-            continue
-        if any( regulars.lower() in category_row[0].lower() for regulars in ["canteen", "Kantine","Mezza","2. Gericht","2nd Court", "pasta"]):
             continue
 
         dish_elements = category_row[weekday_index].split(DISH_ELEMENT_SEP)
